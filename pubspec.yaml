@@ -1,7 +1,7 @@
 name: in_app_permission
-description: "A new Flutter project."
+description: "Permission plugin for Flutter. This plugin provides a cross-platform (iOS, Android) API to request and check permissions."
 version: 1.0.0
-homepage:
+repository: https://github.com/Mohiuddin655-PUB/in_app_permission.git
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
