@@ -1,42 +1,39 @@
 import 'package:permission_handler/permission_handler.dart';
 
-part 'permissions.dart';
-part 'status.dart';
-
 class InAppPermission {
   const InAppPermission._();
 
-  static Future<InAppPermissionStatus> check(InAppPermissions permission) {
-    return InAppPermissions.of(permission)
-        .status
-        .then(InAppPermissionStatus.from);
+  static Future<PermissionStatus> check(Permission permission) {
+    return permission.status;
   }
 
-  static Future<InAppPermissionStatus> request(InAppPermissions permission) {
-    return InAppPermissions.of(permission)
-        .request()
-        .then(InAppPermissionStatus.from);
+  static Future<PermissionStatus> request(Permission permission) {
+    return permission.request();
   }
 
-  static Future<InAppPermissionStatus> isPermission(
-    InAppPermissions permission, {
-    bool checkAlsoPermanent = false,
-  }) async {
-    return check(permission).then((_) {
-      if (_.isDenied || (checkAlsoPermanent && _.isPermanentlyDenied)) {
-        return request(permission);
+  static Future<PermissionStatus> checkAndRequest(
+    Permission permission, [
+    bool openSettings = true,
+  ]) async {
+    var status = await check(permission);
+    if (status.isDenied) {
+      status = await request(permission);
+    } else if (openSettings && status.isPermanentlyDenied) {
+      openAppSettings();
+    }
+    return status;
+  }
+
+  static Future<bool> isPermission(
+    Permission permission, [
+    bool openSettings = true,
+  ]) {
+    return checkAndRequest(permission, openSettings).then((status) {
+      if (status.isGranted || status.isLimited) {
+        return true;
       } else {
-        return _;
+        return false;
       }
-    });
-  }
-
-  static Future<bool> isChecked(
-    InAppPermissions permission, {
-    bool checkAlsoPermanent = false,
-  }) {
-    return isPermission(permission).then((value) {
-      return value.isGranted;
     });
   }
 }
