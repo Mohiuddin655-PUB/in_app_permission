@@ -1,3 +1,7 @@
+## 1.1.2
+
+* Update external libraries
+
 ## 1.1.1
 
 * Platform permission supports
